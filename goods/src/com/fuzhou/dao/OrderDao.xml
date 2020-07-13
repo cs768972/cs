@@ -1,0 +1,64 @@
+<?xm	l version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.fuzhou.dao.OrderDao">
+	<select id="selectBookBybid" resultType="com.fuzhou.domain.Book">
+		select * from t_book where bid=#{bid}
+	</select>
+	<resultMap type="com.fuzhou.domain.OrderItem" id="ItemBook">
+		<id column="orderItemId" property="orderItemId"/>
+		<result column="quantity" property="quantity"/>
+		<result column="subtotal" property="subtotal"/>
+		<association property="book" javaType="com.fuzhou.domain.Book" 
+		select="selectBookBybid" column="bid"/>		 
+	</resultMap>
+	
+	
+	<!-- 查询订单，用于显示生成的订单 -->
+	<select id="selectUserByUid" resultType="com.fuzhou.domain.User">
+		select * from t_user where uid=#{uid}
+	</select>
+	<select id="selectOrderItemByOid" resultMap="ItemBook">
+		select * from t_orderitem where oid=#{oid}
+	</select>
+	<resultMap type="com.fuzhou.domain.Order" id="orderAlipay">
+		<id column="oid" property="oid"/>
+		<result column="ordertime" property="ordertime"/>
+		<result column="total" property="total"/>
+		<result column="status" property="status"/>
+		<result column="address" property="address"/>
+		<association property="owner" javaType="com.fuzhou.domain.User" 
+		select="selectUserByUid" column="uid"/>
+		<collection property="orderItemList" ofType="com.fuzhou.domain.OrderItem" 
+		select="selectOrderItemByOid" column="oid"/>
+		 
+	</resultMap>
+	<select id="selectOrderById" resultMap="orderAlipay">
+		select * from t_order where oid=#{oid}
+	</select>
+	
+	<!--查询用户订单  -->
+	<select id="selectOrderByUId" resultMap="orderAlipay">
+		select * from t_order where uid=#{uid}
+	</select>
+	
+	<insert id="insertOrder">
+		insert into t_order values(#{oid},#{ordertime},#{total},#{status},#{address},#{owner.uid})
+	</insert>
+	
+	<insert id="insertOrderItem">
+		insert into t_orderitem values
+		<foreach collection="orderItems" item="orderItem" index="index" separator=",">
+			(#{orderItem.orderItemId},#{orderItem.quantity},#{orderItem.subtotal},
+			#{orderItem.book.bid},#{orderItem.book.bname},#{orderItem.book.currPrice}
+			,#{orderItem.book.image_b},#{orderItem.order.oid})
+		</foreach>
+		
+	</insert>
+	
+	<!-- 更新订单状态 -->
+	<update id="updateOrderStatus">
+		update t_order set status=#{arg1} where oid=#{arg0}
+	</update>
+</mapper>

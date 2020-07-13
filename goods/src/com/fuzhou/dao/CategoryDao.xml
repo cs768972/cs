@@ -1,0 +1,44 @@
+<?xm	l version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.fuzhou.dao.CategoryDao">
+	<!-- 对应collection -->
+	<select id="selectChildrenByPid" resultType="com.fuzhou.domain.Category">
+		select * from t_category where pid=#{ooo}
+	</select>
+	<!-- 对应association -->
+	<select id="selectParentByCid" resultType="com.fuzhou.domain.Category">
+		select * from t_category where cid=#{ooo}
+	</select>
+	<resultMap type="com.fuzhou.domain.Category" id="CategoryMapper">
+		<id column="cid" property="cid"/>
+		<result column="cname" property="cname"/>
+		<result column="desc" property="desc"/>
+		<!-- <result column="pid" property="pid"/> -->
+		 
+	</resultMap>
+	<resultMap type="com.fuzhou.domain.Category" id="CategoryChildren" extends="CategoryMapper">
+		<association property="parent" javaType="com.fuzhou.domain.Category" select="selectParentByCid" column="pid"/>
+		<collection property="children" ofType="com.fuzhou.domain.Category" select="selectChildrenByPid" column="cid"/>
+	</resultMap>
+		
+	<select id="selectAllCategory" resultMap="CategoryChildren">
+		select * from t_category
+	</select>
+	
+	
+	
+	
+	
+	
+	
+	
+	<!-- <select id="selectAllCategory" resultType="com.fuzhou.domain.Category">
+		select * from t_category where pid is null; 
+	</select>
+	
+	<select id="selectAllCategoryByPid" resultType="com.fuzhou.domain.Category">
+		select * from t_category where pid=#{xxx}; 
+	</select> -->
+</mapper>

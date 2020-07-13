@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.fuzhou.dao.CartDao">
+		
+	
+	<insert id="insertCart">
+		insert into t_cartitem (cartItemId,quantity,bid,uid) values(#{cartItemId},#{quantity},#{book.bid},#{user.uid})
+		
+	</insert>
+	
+	<select id="selectCartByBidAndUid" resultType="com.fuzhou.domain.CartItem">
+		select * from t_cartitem where bid = #{book.bid} and uid=#{user.uid}
+	</select>
+	
+	<update id="updateCartQuantity">
+		update t_cartitem set quantity=#{quantity} where bid = #{book.bid} and uid=#{user.uid}
+	</update>
+	
+		
+	<!-- 根据购物车查出来的bid，查询图书 -->
+	<select id="selectBookByBid" resultType="com.fuzhou.domain.Book">
+		select * from t_book where bid=#{oo}
+	</select>
+	<!-- 根据购物车查出来的uid，查询用户 -->
+	<select id="selectUserByUid" resultType="com.fuzhou.domain.User">
+		select * from t_user where uid=#{oo}
+	</select>
+	<resultMap type="com.fuzhou.domain.CartItem" id="CartMapper">
+		<id column="cartItemId" property="cartItemId"/>
+		<result column="quantity" property="quantity"/>
+		<association property="book" column="bid" javaType="com.fuzhou.domain.Book" select="selectBookByBid"/>
+		<association property="user" column="uid" javaType="com.fuzhou.domain.User" select="selectUserByUid"/>
+	</resultMap>
+	<!-- 查询出 cartItemId quantity uid bid -->
+	<select id="selectCartByUid" resultMap="CartMapper" >
+		select * from t_cartitem where uid=#{xxx}
+	</select>
+	
+	
+	<!-- 结算 -->
+	<resultMap type="com.fuzhou.domain.CartItem" id="CartItemMapper">
+		<id column="cartItemId" property="cartItemId"/>
+		<result column="quantity" property="quantity"/>
+		<association property="book" column="bid" javaType="com.fuzhou.domain.Book" select="selectBookByBid"/>
+	</resultMap>
+	<select id="selectCartByIds" resultMap="CartItemMapper">
+		select * from t_cartitem where 
+		cartItemId in 
+		<foreach collection="cartItemIds" item="cartItemId" open="(" close=")" separator=",">
+            #{cartItemId}
+        </foreach>
+	</select>
+</mapper>

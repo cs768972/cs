@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.fuzhou.dao.BookDao">
+		
+	
+		
+	<select id="selectAllBooks" resultType="com.fuzhou.domain.Book">
+		select * from t_book;
+	</select>
+	
+	<select id="selectBookByCid" resultType="com.fuzhou.domain.Book">
+		select * from t_book where cid=#{cid};
+	</select>
+	
+	<select id="selectBookByBid" resultType="com.fuzhou.domain.Book">
+		select * from t_book where bid=#{bid};
+	</select>
+</mapper>
