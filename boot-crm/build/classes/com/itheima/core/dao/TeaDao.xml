@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.itheima.core.dao.TeaDao">
+	<resultMap id="BaseResultMap01"
+		type="com.itheima.core.po.Tea">
+		<id column="id" property="id" />
+		<result column="tea_type" property="tea_type" />
+		<result column="tea_name" property="tea_name" />
+		<result column="tea_price" property="tea_price" />
+		<result column="Monthly_sales" property="Monthly_sales" />
+		<result column="tea_place" property="tea_place" />
+	</resultMap>
+	
+	<select id="findTeaById" parameterType="Integer"
+		                               resultType="Tea">
+		select * from t_tea where id = #{id}
+	</select>
+	
+	<select id="findTeaAll" resultType="Tea">
+		select * from t_tea 
+	</select>
+	
+	<delete id="delTeaById" parameterType="Integer" >
+		delete  from t_tea where id = #{id}
+	</delete>
+	
+	<insert id="doAddTea" parameterType="Tea">
+		insert into t_tea(id, tea_type, tea_name,tea_price, Monthly_sales,tea_place) values (#{id}, #{tea_type},#{tea_name},#{tea_price},#{Monthly_sales},#{tea_place})
+	</insert>
+	
+	<update id="doUpdateTea" parameterType="Tea">
+		update t_tea set id=#{id}, tea_type=#{tea_type}, tea_name=#{tea_name}, tea_price=#{tea_price}, Monthly_sales=#{Monthly_sales},tea_place=#{tea_place} where id=#{id}
+	</update>
+	
+</mapper>
